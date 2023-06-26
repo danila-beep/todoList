@@ -8,6 +8,7 @@ import {
   changeTaskTitle,
   removeTask,
 } from "./store/slices/tasks.slice";
+import EditableSpan from "./components/EditableSpan";
 
 function App() {
   const tasks = useSelector((state: RootStateType) => state.tasks);
@@ -16,8 +17,6 @@ function App() {
   const [inputOfNewTaskValue, setInputOfNewTaskValue] = useState<string>("");
   const [changeTaskTitleInputValue, setChangeTaskTitleInputValue] =
     useState<string>("");
-  const [isEditMode, setIsEditMode] = useState(false);
-  const [inputOfNewTaskTitle, setInputOfNewTaskTitle] = useState<string>("");
 
   function inputOfNewTaskHandler(event: ChangeEvent<HTMLInputElement>): void {
     setInputOfNewTaskValue(event.currentTarget.value);
@@ -44,13 +43,7 @@ function App() {
     return;
   }
 
-  const inputOfNewTitleOnChangeHandler = (
-    event: ChangeEvent<HTMLInputElement>
-  ) => {
-    console.log("all works");
-    
-    setInputOfNewTaskTitle(event.currentTarget.value)
-  };
+
 
   return (
     <>
@@ -71,25 +64,7 @@ function App() {
         {tasks.map((task) => (
           <div className="taskItem">
             <input type="checkbox" checked={task.isDone} onClick={() => dispatch(changeTaskStatus({taskId: task.id, newTaskStatus: !task.isDone}))}/>
-            {isEditMode ? (
-              <input
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") {
-                    dispatch(
-                        changeTaskTitle({
-                          taskId: task.id,
-                          newTaskTitle: inputOfNewTaskTitle,
-                        })
-                      );
-                      setIsEditMode(false)
-                  }
-                }}
-                value={inputOfNewTaskTitle}
-                onChange={inputOfNewTitleOnChangeHandler}
-              />
-            ) : (
-              <div onDoubleClick={() => setIsEditMode(!isEditMode)}>{task.title}</div>
-            )}
+            <EditableSpan elementId={task.id} elementTitle={task.title}/>
             <span>
               <button onClick={() => dispatch(removeTask(task.id))}>
                 remove task
