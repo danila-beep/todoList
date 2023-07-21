@@ -1,0 +1,27 @@
+.checkBoxWrapper {
+    display: inline-flex;
+    transition: .3s;
+}
+
+.checkBoxWrapper input {
+    opacity: 0;
+    position: absolute;
+    top: -900000;
+    left: -900000;
+}
+
+.checkBoxWrapper label {
+    background: var(--bg-color);
+    padding: .4rem;
+    border: .1rem solid red;
+    border-radius: .5rem;
+    color: red;
+    transition: .3s;
+    cursor: pointer;
+
+}
+
+.checkBoxWrapper input:checked + label {
+    border-color: green;
+    color: green;
+}

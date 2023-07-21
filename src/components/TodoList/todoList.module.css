@@ -1,0 +1,71 @@
+.todoListWrapper {
+  min-width: 20rem;
+  background: var(--second-bg-color);
+  display: inline-flex;
+  padding: 2% 1rem;
+  border-radius: 0.5rem;
+  flex-direction: column;
+  margin-top: 3rem;
+  height: fit-content;
+}
+
+.todoListHeader {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  gap: 0.5rem;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 1rem;
+  border-bottom: 0.1rem solid var(--text-color);
+  margin-bottom: 1rem;
+}
+
+.todoListTasksWrapper {
+  width: 100%;
+  margin-top: 1rem;
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.filterWrapper {
+  display: flex;
+  flex-direction: row;
+  gap: 1rem;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 1rem;
+  padding: 0 1rem;
+}
+
+.filterWrapper span {
+  border: .15rem solid var(--icon-color);
+  border-radius: .5rem;
+  padding: .5rem;
+  cursor: pointer;
+  transition: .3s;
+}
+
+.filterWrapper span:hover {
+  opacity: .6;
+}
+
+.filterWrapper span:active {
+  transform: scale(110%);
+}
+
+.filterWrapper span:nth-child(1) {
+
+}
+
+.filterWrapper span:nth-child(2) {
+  color: green;
+  border-color: green;
+}
+
+.filterWrapper span:nth-child(3) {
+  color: red;
+  border-color: red;
+}

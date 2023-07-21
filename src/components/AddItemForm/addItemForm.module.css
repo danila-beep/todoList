@@ -1,0 +1,40 @@
+.addItemFormWrapper {
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+    gap: 1rem;
+}
+
+.addItemFormInput {
+    display: flex;
+    flex-direction: row;
+    gap: .5rem;
+    border: .1rem solid var(--icon-color);
+    padding: .5rem;
+    border-radius: .5rem;
+}
+
+.addItemFormInput input {
+    background: transparent;
+    border: none;
+    min-width: 13rem;
+    color: white;
+}
+
+.addItemFormWrapper button {
+    background: var(--text-color);
+    border: none;
+    padding: .5rem;
+    border-radius: .5rem;
+    color: var(-bg-color);
+    transition: .3s;
+    cursor: pointer;
+}
+
+.addItemFormWrapper button:hover {
+    background: var(--second-text-color);
+}
+
+.addItemFormWrapper button:active {
+    transform: scale(105%);
+}

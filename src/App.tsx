@@ -1,79 +1,57 @@
-import React, { ChangeEvent, KeyboardEvent, MouseEvent, useState } from "react";
+import React, { useState } from "react";
 import "./App.css";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatchType, RootStateType } from "./store/store";
-import {
-  addTask,
-  changeTaskStatus,
-  changeTaskTitle,
-  removeTask,
-} from "./store/slices/tasks.slice";
-import EditableSpan from "./components/EditableSpan";
+import { TodoListType } from "./constants/types";
+import { addTodoList } from "./store/slices/todoLists.slice";
+import SideBar from "./components/SideBar/SideBar";
+import AddItemForm from "./components/AddItemForm/AddItemForm";
+import TodoList from "./components/TodoList/TodoList";
 
 function App() {
-  const tasks = useSelector((state: RootStateType) => state.tasks);
+  const todoLists = useSelector<RootStateType, Array<TodoListType>>(
+    (state) => state.todoLists
+  );
   const dispatch = useDispatch<AppDispatchType>();
 
-  const [inputOfNewTaskValue, setInputOfNewTaskValue] = useState<string>("");
-  const [changeTaskTitleInputValue, setChangeTaskTitleInputValue] =
-    useState<string>("");
+  const [addTodoListInputValue, setAddTodoListInputValue] = useState("");
 
-  function inputOfNewTaskHandler(event: ChangeEvent<HTMLInputElement>): void {
-    setInputOfNewTaskValue(event.currentTarget.value);
-  }
+  const addTodoListHandler = () => {
+    dispatch(
+      addTodoList({
+        newTodoListTitle: addTodoListInputValue,
+      })
+    );
+  };
 
-  function changeTaskTitleInputHandler(
-    event: ChangeEvent<HTMLInputElement>
-  ): void {
-    setChangeTaskTitleInputValue(event.currentTarget.value);
-  }
-
-  function buttonOfNewTaskHandler(event: MouseEvent<HTMLButtonElement>): void {
-    dispatch(addTask(inputOfNewTaskValue));
-    setInputOfNewTaskValue("");
-  }
-
-  function keyDownOfNewTaskHandler(
-    event: KeyboardEvent<HTMLInputElement>
-  ): void {
-    if (event.key === "Enter") {
-      dispatch(addTask(inputOfNewTaskValue));
-      setInputOfNewTaskValue("");
-    }
-    return;
-  }
-
-
+  const addTodoInputSetter = (value: string) => {
+    setAddTodoListInputValue(value);
+  };
 
   return (
-    <>
-      <div>
-        <span>
-          <input
-            type="text"
-            value={inputOfNewTaskValue}
-            onChange={inputOfNewTaskHandler}
-            onKeyDown={keyDownOfNewTaskHandler}
-          />
-        </span>
-        <span>
-          <button onClick={buttonOfNewTaskHandler}>Add Task</button>
-        </span>
+    <div className="App">
+      <SideBar />
+      <div className="MainContentWrapper">
+        <AddItemForm
+          addingElement={"TodoList"}
+          onClick={addTodoListHandler}
+          value={addTodoListInputValue}
+          onChange={addTodoInputSetter}
+        />
+        <div className="todoListsList">
+          {todoLists.map((todoList) => {
+            return (
+              <TodoList
+                key={todoList.id}
+                todoListId={todoList.id}
+                todoListTitle={todoList.title}
+                todoListFilter={todoList.filter}
+              />
+            );
+          })}
+        </div>
       </div>
-      <div className="tasksList">
-        {tasks.map((task) => (
-          <div className="taskItem">
-            <input type="checkbox" checked={task.isDone} onClick={() => dispatch(changeTaskStatus({taskId: task.id, newTaskStatus: !task.isDone}))}/>
-            <EditableSpan elementId={task.id} elementTitle={task.title}/>
-            <span>
-              <button onClick={() => dispatch(removeTask(task.id))}>
-                remove task
-              </button>
-            </span>
-          </div>
-        ))}
-      </div>
-    </>
+    </div>
   );
 }
 
