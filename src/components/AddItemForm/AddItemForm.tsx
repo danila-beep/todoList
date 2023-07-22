@@ -6,13 +6,20 @@ type AddItemFormProps = {
   addingElement?: string;
   onClick?: () => void;
   value?: string;
-  onChange: (value: string) => void
-  centered?: boolean
+  onChange: (value: string) => void;
+  centered?: boolean;
 };
 
-const AddItemForm: FC<AddItemFormProps> = (props) => {
+const AddItemForm: FC<AddItemFormProps> = React.memo((props) => {
   return (
-    <div className={s.addItemFormWrapper} style={props.centered ? {justifyContent: "center"} : {justifyContent: "start"}}>
+    <div
+      className={s.addItemFormWrapper}
+      style={
+        props.centered
+          ? { justifyContent: "center" }
+          : { justifyContent: "start" }
+      }
+    >
       <div className={s.addItemFormInput}>
         <input
           type="text"
@@ -26,6 +33,6 @@ const AddItemForm: FC<AddItemFormProps> = (props) => {
       </button>
     </div>
   );
-};
+});
 
 export default AddItemForm;

@@ -2,7 +2,7 @@ import React from "react";
 import s from "./sidebar.module.css";
 import { UilDashboard, UilHome } from "@iconscout/react-unicons";
 
-const SideBar = () => {
+const SideBar = React.memo(() => {
   return (
     <div className={s.sideBarWrapper}>
       <h1>TodoList</h1>
@@ -23,6 +23,6 @@ const SideBar = () => {
       </div>
     </div>
   );
-};
+});
 
 export default SideBar;

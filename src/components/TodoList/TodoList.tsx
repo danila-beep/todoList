@@ -1,4 +1,4 @@
-import React, { FC, useState } from "react";
+import React, { FC, useCallback, useState } from "react";
 import s from "./todoList.module.css";
 import { UilArrowRight, UilTrashAlt } from "@iconscout/react-unicons";
 import Task from "../Task/Task";
@@ -20,7 +20,7 @@ type TodoListProps = {
   todoListFilter: string;
 };
 
-const TodoList: FC<TodoListProps> = (props) => {
+const TodoList: FC<TodoListProps> = React.memo((props) => {
   const tasks = useSelector<RootStateType, TodoListsList>(
     (state) => state.tasks
   );
@@ -37,7 +37,7 @@ const TodoList: FC<TodoListProps> = (props) => {
 
   const [addTaskInputValue, setAddTaskInputValue] = useState("");
 
-  const addTaskHandler = () => {
+  const addTaskHandler = useCallback(() => {
     dispatch(
       addTask({
         newTaskTitle: addTaskInputValue,
@@ -45,28 +45,31 @@ const TodoList: FC<TodoListProps> = (props) => {
       })
     );
     setAddTaskInputValue("");
-  };
+  }, [addTaskInputValue, props.todoListId, dispatch]);
 
-  const addTaskInputSetter = (value: string) => {
+  const addTaskInputSetter = useCallback((value: string) => {
     setAddTaskInputValue(value);
-  };
+  }, []);
 
-  const removeTodoListHandler = () => {
+  const removeTodoListHandler = useCallback(() => {
     dispatch(
       removeTodoList({
         todoListId: props.todoListId,
       })
     );
-  };
+  }, [props.todoListId, dispatch]);
 
-  const changeTodoListFilterHandler = (filterValue: FilterValuesType) => {
-    dispatch(
-      changeTodoListFilter({
-        todoListId: props.todoListId,
-        newFilterValue: filterValue,
-      })
-    );
-  };
+  const changeTodoListFilterHandler = useCallback(
+    (filterValue: FilterValuesType) => {
+      dispatch(
+        changeTodoListFilter({
+          todoListId: props.todoListId,
+          newFilterValue: filterValue,
+        })
+      );
+    },
+    [props.todoListId, dispatch]
+  );
 
   return (
     <div className={s.todoListWrapper}>
@@ -80,7 +83,7 @@ const TodoList: FC<TodoListProps> = (props) => {
             spanFor={"todolist"}
           />
         </h3>
-        <UilTrashAlt onClick={removeTodoListHandler} />
+        <UilTrashAlt onClick={removeTodoListHandler} className={s.deleteButton}/>
       </div>
       <AddItemForm
         addingElement={"Task"}
@@ -105,7 +108,6 @@ const TodoList: FC<TodoListProps> = (props) => {
       <div className={s.filterWrapper}>
         <RadioButton
           name="filter"
-
           onClick={() => {
             changeTodoListFilterHandler("all");
           }}
@@ -114,7 +116,6 @@ const TodoList: FC<TodoListProps> = (props) => {
         </RadioButton>
         <RadioButton
           name="filter"
-
           onClick={() => {
             changeTodoListFilterHandler("done");
           }}
@@ -123,7 +124,6 @@ const TodoList: FC<TodoListProps> = (props) => {
         </RadioButton>
         <RadioButton
           name="filter"
-
           onClick={() => {
             changeTodoListFilterHandler("notDone");
           }}
@@ -133,6 +133,6 @@ const TodoList: FC<TodoListProps> = (props) => {
       </div>
     </div>
   );
-};
+});
 
 export default TodoList;

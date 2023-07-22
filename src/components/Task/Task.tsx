@@ -1,4 +1,4 @@
-import React, { FC } from "react";
+import React, { FC, useCallback } from "react";
 import s from "./task.module.css";
 import { UilTrashAlt, UilUser } from "@iconscout/react-unicons";
 import { useDispatch } from "react-redux";
@@ -13,26 +13,26 @@ type TaskPropsType = {
   taskIsDone: boolean;
 };
 
-const Task: FC<TaskPropsType> = (props) => {
+const Task: FC<TaskPropsType> = React.memo((props) => {
   const dispatch = useDispatch();
 
-  const removeButtonHandler = () => {
+  const removeButtonHandler = useCallback(() => {
     dispatch(
       removeTask({
         todoListId: props.todoListId,
         taskId: props.taskId,
       })
     );
-  };
+  }, [props.todoListId, props.taskId, dispatch]);
 
-  const changeTaskStatusHandler = () => {
+  const changeTaskStatusHandler = useCallback(() => {
     dispatch(
       changeTaskStatus({
         todoListId: props.todoListId,
         taskId: props.taskId,
       })
     );
-  };
+  }, [props.todoListId, props.taskId, dispatch])
 
   return (
     <div className={s.taskWrapper}>
@@ -66,6 +66,6 @@ const Task: FC<TaskPropsType> = (props) => {
       </div>
     </div>
   );
-};
+});
 
 export default Task;

@@ -12,7 +12,7 @@ type EditableSpanPropsType = {
   spanFor: "task" | "todolist";
 };
 
-const EditableSpan: FC<EditableSpanPropsType> = (props) => {
+const EditableSpan: FC<EditableSpanPropsType> = React.memo((props) => {
   const dispatch = useDispatch<AppDispatchType>();
 
   const [isEditMode, setIsEditMode] = useState(false);
@@ -36,10 +36,12 @@ const EditableSpan: FC<EditableSpanPropsType> = (props) => {
         );
         setIsEditMode(false);
       } else {
-        dispatch(changeTodoListTitle({
+        dispatch(
+          changeTodoListTitle({
             todoListId: props.elementId,
-            newTodoListTitle: inputOfNewTaskTitle
-        }))
+            newTodoListTitle: inputOfNewTaskTitle,
+          })
+        );
         setIsEditMode(false);
       }
     }
@@ -63,6 +65,6 @@ const EditableSpan: FC<EditableSpanPropsType> = (props) => {
       ) : undefined}
     </div>
   );
-};
+});
 
 export default EditableSpan;

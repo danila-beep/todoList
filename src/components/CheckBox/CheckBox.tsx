@@ -8,14 +8,14 @@ type CheckBoxProps = {
 
 const CheckBox: FC<
   PropsWithChildren<CheckBoxProps & React.InputHTMLAttributes<HTMLInputElement>>
-> = (props) => {
+> = React.memo((props) => {
   const { isChecked, ...rest } = props;
 
   const checkBoxTitleRender = () => {
     if (isChecked) {
-      return "Done"
+      return "Done";
     } else {
-      return "Not Done"
+      return "Not Done";
     }
   };
 
@@ -26,6 +26,6 @@ const CheckBox: FC<
       <label htmlFor={checkBoxId}>{checkBoxTitleRender()}</label>
     </div>
   );
-};
+});
 
 export default CheckBox;
