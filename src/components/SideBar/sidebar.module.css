@@ -1,6 +1,6 @@
 .sideBarWrapper {
     position: fixed;
-    width: 20%;
+    width: 20rem;
     height: 100%;
     background: var(--second-bg-color);
     padding: 2rem;

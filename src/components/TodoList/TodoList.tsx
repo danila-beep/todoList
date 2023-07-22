@@ -4,7 +4,7 @@ import { UilArrowRight, UilTrashAlt } from "@iconscout/react-unicons";
 import Task from "../Task/Task";
 import { RootStateType } from "../../store/store";
 import { useDispatch, useSelector } from "react-redux";
-import { TodoListsList } from "../../constants/types";
+import { FilterValuesType, TodoListsList } from "../../constants/types";
 import AddItemForm from "../AddItemForm/AddItemForm";
 import { addTask } from "../../store/slices/tasks.slice";
 import {
@@ -12,6 +12,7 @@ import {
   removeTodoList,
 } from "../../store/slices/todoLists.slice";
 import EditableSpan from "../EditableSpan/EditableSpan";
+import RadioButton from "../RadioButton/RadioButton";
 
 type TodoListProps = {
   todoListId: string;
@@ -58,6 +59,15 @@ const TodoList: FC<TodoListProps> = (props) => {
     );
   };
 
+  const changeTodoListFilterHandler = (filterValue: FilterValuesType) => {
+    dispatch(
+      changeTodoListFilter({
+        todoListId: props.todoListId,
+        newFilterValue: filterValue,
+      })
+    );
+  };
+
   return (
     <div className={s.todoListWrapper}>
       <div className={s.todoListHeader}>
@@ -93,42 +103,33 @@ const TodoList: FC<TodoListProps> = (props) => {
         })}
       </div>
       <div className={s.filterWrapper}>
-        <span
-          onClick={() =>
-            dispatch(
-              changeTodoListFilter({
-                todoListId: props.todoListId,
-                newFilterValue: "all",
-              })
-            )
-          }
+        <RadioButton
+          name="filter"
+
+          onClick={() => {
+            changeTodoListFilterHandler("all");
+          }}
         >
           All
-        </span>
-        <span
-          onClick={() =>
-            dispatch(
-              changeTodoListFilter({
-                todoListId: props.todoListId,
-                newFilterValue: "done",
-              })
-            )
-          }
+        </RadioButton>
+        <RadioButton
+          name="filter"
+
+          onClick={() => {
+            changeTodoListFilterHandler("done");
+          }}
         >
           Done
-        </span>
-        <span
-          onClick={() =>
-            dispatch(
-              changeTodoListFilter({
-                todoListId: props.todoListId,
-                newFilterValue: "notDone",
-              })
-            )
-          }
+        </RadioButton>
+        <RadioButton
+          name="filter"
+
+          onClick={() => {
+            changeTodoListFilterHandler("notDone");
+          }}
         >
           Not Done
-        </span>
+        </RadioButton>
       </div>
     </div>
   );

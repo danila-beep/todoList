@@ -1,0 +1,20 @@
+.radioWrapper {
+    transition: .3s;
+}
+
+.radioWrapper input {
+    position: absolute;
+    top: -900000;
+    left: -90000;
+    opacity: 0;
+}
+
+.radioWrapper label {
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: .3s;
+}
+
+.radioWrapper:hover {
+    transform: scale(105%);
+}

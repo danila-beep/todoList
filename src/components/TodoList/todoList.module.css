@@ -1,12 +1,24 @@
 .todoListWrapper {
-  min-width: 20rem;
+  min-width: 25rem;
   background: var(--second-bg-color);
   display: inline-flex;
   padding: 2% 1rem;
   border-radius: 0.5rem;
   flex-direction: column;
   margin-top: 3rem;
+  animation: show .5s ease;
   height: fit-content;
+}
+
+@keyframes show {
+  0% {
+    transform: scale(0);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
 }
 
 .todoListHeader {
@@ -31,41 +43,27 @@
 }
 
 .filterWrapper {
+  margin: 0 auto;
+  width: fit-content;
   display: flex;
   flex-direction: row;
-  gap: 1rem;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
   margin-top: 1rem;
-  padding: 0 1rem;
+  border: 0.1rem solid var(--icon-color);
+  border-radius: 0.5rem;
+  padding: 2% 1rem;
+  gap: 1.5rem;
+  position: relative;
+  z-index: 3;
 }
 
-.filterWrapper span {
-  border: .15rem solid var(--icon-color);
-  border-radius: .5rem;
-  padding: .5rem;
-  cursor: pointer;
-  transition: .3s;
+.filterWrapper div:nth-child(1) > input:checked + label {
+  color: var(--icon-color);
 }
-
-.filterWrapper span:hover {
-  opacity: .6;
-}
-
-.filterWrapper span:active {
-  transform: scale(110%);
-}
-
-.filterWrapper span:nth-child(1) {
-
-}
-
-.filterWrapper span:nth-child(2) {
+.filterWrapper div:nth-child(2) > input:checked + label {
   color: green;
-  border-color: green;
 }
-
-.filterWrapper span:nth-child(3) {
+.filterWrapper div:nth-child(3) > input:checked + label {
   color: red;
-  border-color: red;
 }

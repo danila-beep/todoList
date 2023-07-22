@@ -8,7 +8,7 @@ export type TodoListType = {
     title: string,
     filter: FilterValuesType
 }
-export type FilterValuesType = "all" | "completed" | "notCompleted"
+export type FilterValuesType = "all" | "done" | "notDone"
 export type TodoListsList = {
     [key: string]: Array<TaskType>
 }

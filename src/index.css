@@ -20,3 +20,13 @@ body {
     color: var(--text-color);
     font-family: "Poppins", sans-serif;
 }
+
+html {
+  font-size: 90%;
+}
+
+@media (max-width: 900px) {
+  html {
+    font-size: 70%;
+  }
+}
