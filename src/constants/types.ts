@@ -1,8 +1,5 @@
-export type TaskType = {
-    id: string,
-    title: string,
-    isDone: boolean
-}
+import { TaskType } from "../api/todoistAPI"
+
 export type TodoListType = {
     id: string,
     title: string,

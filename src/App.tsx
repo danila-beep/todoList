@@ -1,26 +1,29 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./App.css";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatchType, RootStateType } from "./store/store";
 import { TodoListType } from "./constants/types";
-import { addTodoList } from "./store/slices/todoLists.slice";
+import { addTodoList, addTodoTC, getTodoTC } from "./store/slices/todoLists.slice";
 import SideBar from "./components/SideBar/SideBar";
 import AddItemForm from "./components/AddItemForm/AddItemForm";
 import TodoList from "./components/TodoList/TodoList";
+import { useAppDispatch } from "./utils/hooks/useAppDispatch";
 
 function App() {
   const todoLists = useSelector<RootStateType, Array<TodoListType>>(
     (state) => state.todoLists
   );
-  const dispatch = useDispatch<AppDispatchType>();
+  const dispatch = useAppDispatch();
 
   const [addTodoListInputValue, setAddTodoListInputValue] = useState("");
 
+  useEffect(() => {
+    dispatch(getTodoTC())
+  }, [])
+
   const addTodoListHandler = () => {
     dispatch(
-      addTodoList({
-        newTodoListTitle: addTodoListInputValue,
-      })
+      addTodoTC(addTodoListInputValue)
     );
   };
 

@@ -1,9 +1,10 @@
 import React, { ChangeEvent, FC, KeyboardEvent, useState } from "react";
 import s from "./editableSpan.module.css";
-import { changeTaskTitle } from "../../store/slices/tasks.slice";
+import { changeTaskTitle, changeTaskTitleTC } from "../../store/slices/tasks.slice";
 import { useDispatch } from "react-redux";
 import { AppDispatchType } from "../../store/store";
-import { changeTodoListTitle } from "../../store/slices/todoLists.slice";
+import { changeTodoListTitle, changeTodoTitleTC } from "../../store/slices/todoLists.slice";
+import { useAppDispatch } from "../../utils/hooks/useAppDispatch";
 
 type EditableSpanPropsType = {
   elementId: string;
@@ -13,7 +14,7 @@ type EditableSpanPropsType = {
 };
 
 const EditableSpan: FC<EditableSpanPropsType> = React.memo((props) => {
-  const dispatch = useDispatch<AppDispatchType>();
+  const dispatch = useAppDispatch();
 
   const [isEditMode, setIsEditMode] = useState(false);
   const [inputOfNewTaskTitle, setInputOfNewTaskTitle] = useState<string>("");
@@ -28,19 +29,19 @@ const EditableSpan: FC<EditableSpanPropsType> = React.memo((props) => {
     if (event.key === "Enter") {
       if (props.spanFor === "task") {
         dispatch(
-          changeTaskTitle({
-            taskId: props.elementId,
-            newTaskTitle: inputOfNewTaskTitle,
-            todoListId: props.todoListId,
-          })
+          changeTaskTitleTC(
+            props.todoListId,
+            props.elementId,
+            inputOfNewTaskTitle,
+          )
         );
         setIsEditMode(false);
       } else {
         dispatch(
-          changeTodoListTitle({
-            todoListId: props.elementId,
-            newTodoListTitle: inputOfNewTaskTitle,
-          })
+          changeTodoTitleTC(
+            props.elementId,
+            inputOfNewTaskTitle,
+          )
         );
         setIsEditMode(false);
       }
