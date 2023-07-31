@@ -10,16 +10,6 @@
   animation: show 1s ease;
 }
 
-@keyframes show {
-  0% {
-    transform: translateY(-10rem);
-    opacity: 0;
-  }
-  100% {
-    transform: translateY(0);
-    opacity: 1;
-  }
-}
 
 .taskWrapper div {
   display: flex;

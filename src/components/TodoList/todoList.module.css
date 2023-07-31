@@ -10,17 +10,6 @@
   height: fit-content;
 }
 
-@keyframes show {
-  0% {
-    transform: scale(0);
-    opacity: 1;
-  }
-  100% {
-    transform: scale(1);
-    opacity: 1;
-  }
-}
-
 .todoListHeader {
   width: 100%;
   display: flex;
@@ -31,6 +20,11 @@
   padding-bottom: 1rem;
   border-bottom: 0.1rem solid var(--text-color);
   margin-bottom: 1rem;
+}
+
+.errorMessage {
+  color: red;
+  text-align: center;
 }
 
 .deleteButton {

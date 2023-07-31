@@ -1,15 +1,15 @@
 import { Dispatch, createSlice } from "@reduxjs/toolkit";
 
 import { v1 } from "uuid";
-import { TodoListsList } from "../../constants/types";
+import { tasksState } from "../../constants/types";
 import { TaskStatuses, todoListAPI } from "../../api/todoistAPI";
 import { RootStateType } from "../store";
 
 export const todoListId_1 = v1();
 export const todoListId_2 = v1();
-const initialState: TodoListsList = {
-  // [todoListId_1]: [{ id: v1(), title: "initial task", isDone: false }],
-  // [todoListId_2]: [{ id: v1(), title: "initial task", isDone: false }],
+const initialState: tasksState = {
+  tasks: {},
+  isFetching: true,
 };
 
 //CRUD
@@ -20,41 +20,46 @@ const tasksSlice = createSlice({
   reducers: {
     setTasks: (state, action) => {
       return {
-        ...state,
-        [action.payload.todoListId]: [...action.payload.tasks],
+        tasks: {
+          ...state.tasks,
+          [action.payload.todoListId]: [...action.payload.tasks],
+        },
+        isFetching: false,
       };
     },
     addTask: (state, action) => {
       return {
         ...state,
-        [action.payload.task.todoListId]: [
-          action.payload.task,
-          ...state[action.payload.task.todoListId],
-        ],
+        tasks: {
+          [action.payload.task.todoListId]: [
+            action.payload.task,
+            ...state.tasks[action.payload.task.todoListId],
+          ],
+        },
       };
     },
     removeTask: (state, action) => {
-      const searchedIndex = state[action.payload.todoListId].findIndex(
+      const searchedIndex = state.tasks[action.payload.todoListId].findIndex(
         (ti) => ti.id === action.payload.taskId
       );
 
-      state[action.payload.todoListId]?.splice(searchedIndex, 1);
+      state.tasks[action.payload.todoListId]?.splice(searchedIndex, 1);
     },
     changeTaskTitle: (state, action) => {
-      const searhedIndex = state[action.payload.todoListId]?.findIndex(
+      const searhedIndex = state.tasks[action.payload.todoListId]?.findIndex(
         (ti) => ti.id === action.payload.taskId
       );
-      state[action.payload.todoListId][searhedIndex].title =
+      state.tasks[action.payload.todoListId][searhedIndex].title =
         action.payload.title;
     },
     changeTaskStatus: (state, action) => {
-      const searhedIndex = state[action.payload.todoListId]?.findIndex(
+      const searhedIndex = state.tasks[action.payload.todoListId]?.findIndex(
         (ti) => ti.id === action.payload.taskId
       );
-      if (state[action.payload.todoListId][searhedIndex].status === 2) {
-        state[action.payload.todoListId][searhedIndex].status = 0;
+      if (state.tasks[action.payload.todoListId][searhedIndex].status === 2) {
+        state.tasks[action.payload.todoListId][searhedIndex].status = 0;
       } else {
-        state[action.payload.todoListId][searhedIndex].status = 2;
+        state.tasks[action.payload.todoListId][searhedIndex].status = 2;
       }
     },
   },
@@ -89,7 +94,7 @@ export const changeTaskTitleTC =
 export const changeTaskStatusTC =
   (todoListId: string, taskId: string, status: TaskStatuses) =>
   async (dispatch: Dispatch, getState: () => RootStateType) => {
-    const allTasksFromState = getState().tasks;
+    const allTasksFromState = getState().tasks.tasks;
     const tasksForCurrentTodolist = allTasksFromState[todoListId];
     const task = tasksForCurrentTodolist.find((t) => {
       return t.id === taskId;
@@ -99,10 +104,10 @@ export const changeTaskStatusTC =
       todoListAPI
         .changeTaskStatus(todoListId, taskId, {
           ...task,
-          status: status
+          status: status,
         })
         .then(() => {
-          dispatch(changeTaskStatus({todoListId, taskId}));
+          dispatch(changeTaskStatus({ todoListId, taskId }));
         });
     }
   };

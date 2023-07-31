@@ -4,7 +4,7 @@ import { UilArrowRight, UilTrashAlt } from "@iconscout/react-unicons";
 import Task from "../Task/Task";
 import { RootStateType } from "../../store/store";
 import { useDispatch, useSelector } from "react-redux";
-import { FilterValuesType, TodoListsList } from "../../constants/types";
+import { FilterValuesType, TodoListType, TodoListsState, tasksState } from "../../constants/types";
 import AddItemForm from "../AddItemForm/AddItemForm";
 import { addTask, addTaskTC, getTasksTC } from "../../store/slices/tasks.slice";
 import {
@@ -15,23 +15,27 @@ import EditableSpan from "../EditableSpan/EditableSpan";
 import RadioButton from "../RadioButton/RadioButton";
 import { useAppDispatch } from "../../utils/hooks/useAppDispatch";
 import { TaskStatuses } from "../../api/todoistAPI";
+import Preloader from "../Preloader/Preloader";
 
 type TodoListProps = {
-  todoListId: string;
-  todoListTitle: string;
-  todoListFilter: string;
+  todoList: TodoListType
+  draggable: boolean
+  dragStartHandler: (e: React.DragEvent<HTMLDivElement>, card: TodoListType) => void
+  dragLeaveHandler: (e: React.DragEvent<HTMLDivElement>) => void
+  dragEndHandler: (e: React.DragEvent<HTMLDivElement>) => void
+  dragOverHandler: (e: React.DragEvent<HTMLDivElement>) => void
+  dropHandler: (e: React.DragEvent<HTMLDivElement>, card: TodoListType) => void
 };
 
 const TodoList: FC<TodoListProps> = React.memo((props) => {
-  const tasks = useSelector<RootStateType, TodoListsList>(
+  const tasksState = useSelector<RootStateType, tasksState>(
     (state) => state.tasks
   );
-  console.log(tasks);
 
   const dispatch = useAppDispatch();
 
   useEffect(() => {
-    dispatch(getTasksTC(props.todoListId));
+    dispatch(getTasksTC(props.todoList.id));
   }, []);
 
   const taskIsDoneChecker = (t: TaskStatuses) => {
@@ -40,55 +44,70 @@ const TodoList: FC<TodoListProps> = React.memo((props) => {
     } else return false;
   };
 
-  let tasksForRender = tasks[props.todoListId];
+  let tasksForRender = tasksState.tasks[props.todoList.id];
 
-  if (props.todoListFilter === "notDone") {
-    tasksForRender = tasks[props.todoListId]?.filter(
+  if (props.todoList.filter === "notDone") {
+    tasksForRender = tasksState.tasks[props.todoList.id]?.filter(
       (t) => taskIsDoneChecker(t.status) === false
     );
   }
-  if (props.todoListFilter === "done") {
-    tasksForRender = tasks[props.todoListId]?.filter(
+  if (props.todoList.filter === "done") {
+    tasksForRender = tasksState.tasks[props.todoList.id]?.filter(
       (t) => taskIsDoneChecker(t.status) === true
     );
   }
 
   const [addTaskInputValue, setAddTaskInputValue] = useState("");
+  const [addItemError, setAddItemError] = useState<boolean>(false);
 
   const addTaskHandler = () => {
-    dispatch(addTaskTC(props.todoListId, addTaskInputValue));
-    setAddTaskInputValue("");
+    if (addTaskInputValue === "" || addTaskInputValue === undefined) {
+      setAddItemError(true);
+    } else if (addTaskInputValue.length > 0) {
+      dispatch(addTaskTC(props.todoList.id, addTaskInputValue));
+      setAddTaskInputValue("");
+    }
   };
 
-  const addTaskInputSetter = useCallback((value: string) => {
+  const addTaskInputSetter = (value: string) => {
     setAddTaskInputValue(value);
-  }, []);
+    setAddItemError(false);
+  };
 
   const removeTodoListHandler = () => {
-    dispatch(removeTodoTC(props.todoListId));
+    dispatch(removeTodoTC(props.todoList.id));
   };
 
   const changeTodoListFilterHandler = useCallback(
     (filterValue: FilterValuesType) => {
       dispatch(
         changeTodoListFilter({
-          todoListId: props.todoListId,
+          todoListId: props.todoList.id,
           newFilterValue: filterValue,
         })
       );
     },
-    [props.todoListId, dispatch]
+    [props.todoList.id, dispatch]
   );
 
+
   return (
-    <div className={s.todoListWrapper}>
+    <div
+      className={s.todoListWrapper}
+      draggable={props.draggable}
+      onDragStart={e => props.dragStartHandler(e, props.todoList)}
+      onDragLeave={e => props.dragLeaveHandler(e)}
+      onDragEnd={e => props.dragEndHandler(e)}
+      onDragOver={e => props.dragOverHandler(e)}
+      onDrop={e => props.dropHandler(e, props.todoList)}
+    >
       <div className={s.todoListHeader}>
         <UilArrowRight />
         <h3>
           <EditableSpan
-            elementId={props.todoListId}
-            elementTitle={props.todoListTitle}
-            todoListId={props.todoListId}
+            elementId={props.todoList.id}
+            elementTitle={props.todoList.id}
+            todoListId={props.todoList.id}
             spanFor={"todolist"}
           />
         </h3>
@@ -103,20 +122,28 @@ const TodoList: FC<TodoListProps> = React.memo((props) => {
         value={addTaskInputValue}
         onChange={addTaskInputSetter}
         centered
+        keyPressAllow
       />
-      <div className={s.todoListTasksWrapper}>
-        {tasksForRender?.map((task) => {
-          return (
-            <Task
-              key={task.id}
-              todoListId={props.todoListId}
-              taskId={task.id}
-              taskTitle={task.title}
-              taskStatus={task.status}
-            />
-          );
-        })}
-      </div>
+      {addItemError ? (
+        <div className={s.errorMessage}>Title is hard required</div>
+      ) : undefined}
+      {tasksState.isFetching ? (
+        <Preloader />
+      ) : (
+        <div className={s.todoListTasksWrapper}>
+          {tasksForRender?.map((task) => {
+            return (
+              <Task
+                key={task.id}
+                todoListId={props.todoList.id}
+                taskId={task.id}
+                taskTitle={task.title}
+                taskStatus={task.status}
+              />
+            );
+          })}
+        </div>
+      )}
       <div className={s.filterWrapper}>
         <RadioButton
           name="filter"
@@ -149,5 +176,5 @@ const TodoList: FC<TodoListProps> = React.memo((props) => {
 
 export default TodoList;
 function deleteTodoTC(todoListId: string): any {
-  throw new Error("Function not implemented.");
+  
 }

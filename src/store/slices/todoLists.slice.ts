@@ -1,47 +1,57 @@
 import { Dispatch, createSlice } from "@reduxjs/toolkit";
 import { v1 } from "uuid";
-import { TodoListType } from "../../constants/types";
+import { TodoListType, TodoListsState } from "../../constants/types";
 import { addTask, todoListId_1, todoListId_2 } from "./tasks.slice";
-import { todoListAPI } from "../../api/todoistAPI";
+import { TodoListsType, todoListAPI } from "../../api/todoistAPI";
 import TodoList from "../../components/TodoList/TodoList";
 
-const initialState: TodoListType[] = [
-  // { id: todoListId_1, title: "initial todo", filter: "all" },
-  // { id: todoListId_2, title: "initial todo", filter: "all" },
-];
+const initialState: TodoListsState = {
+  todoLists: [],
+  isFetching: true,
+};
 
 const todoListsSlice = createSlice({
   name: "todoLists",
   initialState,
   reducers: {
     setTodoLists: (state, action) => {
-      return [...action.payload.todoLists].map((todolist) => {
-        return { ...todolist, filter: "all" };
-      });
+      return {
+        todoLists: [...action.payload.todoLists].map((todolist) => {
+          return { ...todolist, filter: "all"};
+        }),
+        isFetching: false
+      }
     },
     addTodoList: (state, action) => {
-      console.log(action.payload.newTodo);
-
-      return [action.payload.newTodo, ...state];
+      return {
+        ...state,
+        todoLists: [action.payload.newTodo, ...state.todoLists],
+      };
     },
     removeTodoList: (state, action) => {
-      return state.filter(
-        (todolist) => todolist.id !== action.payload.todoListId
-      );
+      return {
+        ...state,
+        todoLists: state.todoLists.filter(
+          (todolist) => todolist.id !== action.payload.todoListId
+        ),
+      };
     },
 
     changeTodoListTitle: (state, action) => {
-      return state.map((todolist) =>
-        todolist.id === action.payload.todoListId
-          ? { ...todolist, title: action.payload.title }
-          : todolist
-      );
+      return {
+        ...state,
+        todoLists: state.todoLists.map((todolist) =>
+          todolist.id === action.payload.todoListId
+            ? { ...todolist, title: action.payload.title }
+            : todolist
+        ),
+      };
     },
     changeTodoListFilter: (state, action) => {
-      const searchedIndex = state.findIndex(
+      const searchedIndex = state.todoLists.findIndex(
         (i) => i.id === action.payload.todoListId
       );
-      state[searchedIndex].filter = action.payload.newFilterValue;
+      state.todoLists[searchedIndex].filter = action.payload.newFilterValue;
     },
   },
 });
