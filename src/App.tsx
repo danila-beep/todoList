@@ -13,6 +13,7 @@ import AddItemForm from "./components/AddItemForm/AddItemForm";
 import TodoList from "./components/TodoList/TodoList";
 import { useAppDispatch } from "./utils/hooks/useAppDispatch";
 import Preloader from "./components/Preloader/Preloader";
+import { DragDropContext } from "react-beautiful-dnd";
 
 function App() {
   const todoListsState = useSelector<RootStateType, TodoListsState>(
@@ -42,31 +43,6 @@ function App() {
   };
 
 
-  const [currentDragTodo, setCurrentDragTodo] = useState<TodoListType>()
-
-  function dragStartHandler(e: React.DragEvent<HTMLDivElement>, card: TodoListType): void {
-    setCurrentDragTodo(card)
-  }
-
-  function dragLeaveHandler(e: React.DragEvent<HTMLDivElement>): void {
-    e.currentTarget.style.background = "#292929"
-    
-  }
-
-  function dragEndHandler(e: React.DragEvent<HTMLDivElement>): void {
-    e.currentTarget.style.background = "#292929"
-  }
-  function dragOverHandler(e: React.DragEvent<HTMLDivElement>): void {
-    e.preventDefault()
-    e.currentTarget.style.background = "grey"
-  }
-
-  function dropHandler(e: React.DragEvent<HTMLDivElement>, card: TodoListType): void {
-    e.preventDefault()
-    e.currentTarget.style.background = "#292929"
-    
-    
-  }
 
   return (
     <div className="App">
@@ -87,18 +63,7 @@ function App() {
         ) : (
           <div className="todoListsList">
             {todoListsState.todoLists.map((todoList) => {
-              return (
-                <TodoList
-                  key={todoList.id}
-                  todoList={todoList}
-                  draggable
-                  dragStartHandler={dragStartHandler}
-                  dragLeaveHandler={dragLeaveHandler}
-                  dragEndHandler={dragEndHandler}
-                  dragOverHandler={dragOverHandler}
-                  dropHandler={dropHandler}
-                />
-              );
+              return <TodoList todoList={todoList} key={todoList.id} />;
             })}
           </div>
         )}

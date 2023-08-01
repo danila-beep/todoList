@@ -27,10 +27,20 @@ const tasksSlice = createSlice({
         isFetching: false,
       };
     },
+    reorderTasks: (state, action) => {
+      return {
+        ...state,
+        tasks: {
+          ...state.tasks,
+          [action.payload.todoListId]: [...action.payload.reorderedTasksState],
+        },
+      };
+    },
     addTask: (state, action) => {
       return {
         ...state,
         tasks: {
+          ...state.tasks,
           [action.payload.task.todoListId]: [
             action.payload.task,
             ...state.tasks[action.payload.task.todoListId],
@@ -73,8 +83,6 @@ export const getTasksTC = (todoListId: string) => (dispatch: Dispatch) => {
 export const addTaskTC =
   (todoListId: string, title: string) => async (dispatch: Dispatch) => {
     todoListAPI.createTask(todoListId, title).then((res) => {
-      console.log(res.data);
-
       dispatch(addTask({ task: res.data.data.item }));
     });
   };
@@ -114,6 +122,7 @@ export const changeTaskStatusTC =
 
 export const {
   setTasks,
+  reorderTasks,
   addTask,
   removeTask,
   changeTaskTitle,

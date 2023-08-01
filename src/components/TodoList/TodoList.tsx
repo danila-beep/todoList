@@ -4,9 +4,14 @@ import { UilArrowRight, UilTrashAlt } from "@iconscout/react-unicons";
 import Task from "../Task/Task";
 import { RootStateType } from "../../store/store";
 import { useDispatch, useSelector } from "react-redux";
-import { FilterValuesType, TodoListType, TodoListsState, tasksState } from "../../constants/types";
+import {
+  FilterValuesType,
+  TodoListType,
+  TodoListsState,
+  tasksState,
+} from "../../constants/types";
 import AddItemForm from "../AddItemForm/AddItemForm";
-import { addTask, addTaskTC, getTasksTC } from "../../store/slices/tasks.slice";
+import { addTask, addTaskTC, getTasksTC, reorderTasks } from "../../store/slices/tasks.slice";
 import {
   changeTodoListFilter,
   removeTodoTC,
@@ -14,17 +19,12 @@ import {
 import EditableSpan from "../EditableSpan/EditableSpan";
 import RadioButton from "../RadioButton/RadioButton";
 import { useAppDispatch } from "../../utils/hooks/useAppDispatch";
-import { TaskStatuses } from "../../api/todoistAPI";
+import { TaskStatuses, TaskType } from "../../api/todoistAPI";
 import Preloader from "../Preloader/Preloader";
+import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
 
 type TodoListProps = {
-  todoList: TodoListType
-  draggable: boolean
-  dragStartHandler: (e: React.DragEvent<HTMLDivElement>, card: TodoListType) => void
-  dragLeaveHandler: (e: React.DragEvent<HTMLDivElement>) => void
-  dragEndHandler: (e: React.DragEvent<HTMLDivElement>) => void
-  dragOverHandler: (e: React.DragEvent<HTMLDivElement>) => void
-  dropHandler: (e: React.DragEvent<HTMLDivElement>, card: TodoListType) => void
+  todoList: TodoListType;
 };
 
 const TodoList: FC<TodoListProps> = React.memo((props) => {
@@ -90,91 +90,140 @@ const TodoList: FC<TodoListProps> = React.memo((props) => {
     [props.todoList.id, dispatch]
   );
 
+  const dragDropHandler = (results: any) => {
+    const { source, destination, type } = results;
+
+    console.log(results);
+
+    if (!destination) {
+      return;
+    }
+
+    if (
+      source.droppableId === destination.droppableId &&
+      source.index === destination.index
+    ) {
+      return;
+    }
+
+    if (type === "group") {
+      const reorderedTasksState: TaskType[] = [...tasksForRender];
+
+      const sourceIndex = source.index;
+      const destinationIndex = destination.index;
+
+      const reorderedSource = reorderedTasksState[sourceIndex]
+      reorderedTasksState[sourceIndex] = reorderedTasksState[destinationIndex]
+      reorderedTasksState[destinationIndex] = reorderedSource
+
+      dispatch(reorderTasks({
+        todoListId: props.todoList.id,
+        reorderedTasksState: reorderedTasksState
+      }))
+    }
+  };
 
   return (
-    <div
-      className={s.todoListWrapper}
-      draggable={props.draggable}
-      onDragStart={e => props.dragStartHandler(e, props.todoList)}
-      onDragLeave={e => props.dragLeaveHandler(e)}
-      onDragEnd={e => props.dragEndHandler(e)}
-      onDragOver={e => props.dragOverHandler(e)}
-      onDrop={e => props.dropHandler(e, props.todoList)}
-    >
-      <div className={s.todoListHeader}>
-        <UilArrowRight />
-        <h3>
-          <EditableSpan
-            elementId={props.todoList.id}
-            elementTitle={props.todoList.id}
-            todoListId={props.todoList.id}
-            spanFor={"todolist"}
+    <DragDropContext onDragEnd={dragDropHandler}>
+      <div className={s.todoListWrapper}>
+        <div className={s.todoListHeader}>
+          <UilArrowRight />
+          <h3>
+            <EditableSpan
+              elementId={props.todoList.id}
+              elementTitle={props.todoList.title}
+              todoListId={props.todoList.id}
+              spanFor={"todolist"}
+            />
+          </h3>
+          <UilTrashAlt
+            onClick={removeTodoListHandler}
+            className={s.deleteButton}
           />
-        </h3>
-        <UilTrashAlt
-          onClick={removeTodoListHandler}
-          className={s.deleteButton}
-        />
-      </div>
-      <AddItemForm
-        addingElement={"Task"}
-        onClick={addTaskHandler}
-        value={addTaskInputValue}
-        onChange={addTaskInputSetter}
-        centered
-        keyPressAllow
-      />
-      {addItemError ? (
-        <div className={s.errorMessage}>Title is hard required</div>
-      ) : undefined}
-      {tasksState.isFetching ? (
-        <Preloader />
-      ) : (
-        <div className={s.todoListTasksWrapper}>
-          {tasksForRender?.map((task) => {
-            return (
-              <Task
-                key={task.id}
-                todoListId={props.todoList.id}
-                taskId={task.id}
-                taskTitle={task.title}
-                taskStatus={task.status}
-              />
-            );
-          })}
         </div>
-      )}
-      <div className={s.filterWrapper}>
-        <RadioButton
-          name="filter"
-          onClick={() => {
-            changeTodoListFilterHandler("all");
-          }}
-        >
-          All
-        </RadioButton>
-        <RadioButton
-          name="filter"
-          onClick={() => {
-            changeTodoListFilterHandler("done");
-          }}
-        >
-          Done
-        </RadioButton>
-        <RadioButton
-          name="filter"
-          onClick={() => {
-            changeTodoListFilterHandler("notDone");
-          }}
-        >
-          Not Done
-        </RadioButton>
+        <AddItemForm
+          addingElement={"Task"}
+          onClick={addTaskHandler}
+          value={addTaskInputValue}
+          onChange={addTaskInputSetter}
+          centered
+          keyPressAllow
+        />
+        {addItemError ? (
+          <div className={s.errorMessage}>Title is hard required</div>
+        ) : undefined}
+        {tasksState.isFetching ? (
+          <Preloader />
+        ) : (
+          <Droppable droppableId={props.todoList.id} type="group">
+            {(provided) => {
+              return (
+                <div
+                  className={s.todoListTasksWrapper}
+                  {...provided.droppableProps}
+                  ref={provided.innerRef}
+                >
+                  {tasksForRender?.map((task, index) => {
+                    return (
+                      <Draggable
+                        draggableId={task.id}
+                        key={task.id}
+                        index={index}
+                      >
+                        {(provided) => {
+                          return (
+                            <div
+                              {...provided.dragHandleProps}
+                              {...provided.draggableProps}
+                              ref={provided.innerRef}
+                            >
+                              <Task
+                                key={task.id}
+                                todoListId={props.todoList.id}
+                                taskId={task.id}
+                                taskTitle={task.title}
+                                taskStatus={task.status}
+                              />
+                            </div>
+                          );
+                        }}
+                      </Draggable>
+                    );
+                  })}
+                </div>
+              );
+            }}
+          </Droppable>
+        )}
+        <div className={s.filterWrapper}>
+          <RadioButton
+            name="filter"
+            onClick={() => {
+              changeTodoListFilterHandler("all");
+            }}
+          >
+            All
+          </RadioButton>
+          <RadioButton
+            name="filter"
+            onClick={() => {
+              changeTodoListFilterHandler("done");
+            }}
+          >
+            Done
+          </RadioButton>
+          <RadioButton
+            name="filter"
+            onClick={() => {
+              changeTodoListFilterHandler("notDone");
+            }}
+          >
+            Not Done
+          </RadioButton>
+        </div>
       </div>
-    </div>
+    </DragDropContext>
   );
 });
 
 export default TodoList;
-function deleteTodoTC(todoListId: string): any {
-  
-}
