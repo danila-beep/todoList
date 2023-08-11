@@ -22,6 +22,9 @@ const todoListsSlice = createSlice({
         isFetching: false
       }
     },
+    reorderTodoLists: (state, action) => {
+
+    },
     addTodoList: (state, action) => {
       return {
         ...state,
@@ -80,6 +83,7 @@ export const changeTodoTitleTC =
 
 export const {
   setTodoLists,
+  reorderTodoLists,
   addTodoList,
   removeTodoList,
   changeTodoListTitle,

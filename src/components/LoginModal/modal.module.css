@@ -1,0 +1,176 @@
+.modalWrapper {
+  position: absolute;
+  top: 0;
+  left: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 100;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modalContainer {
+  height: 55%;
+  width: 25%;
+  background: var(--text-color);
+  color: black;
+  border-radius: 1rem;
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  
+  gap: 2rem;
+  position: relative;
+}
+
+.modalContainer h1 {
+  text-align: center;
+  font-size: 2.5rem;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.formInput {
+  display: flex;
+  flex-direction: column;
+}
+
+.formInput label {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--bg-color);
+}
+
+.formInput input {
+  border: none;
+  background: var(--second-bg-color);
+  padding: 0.7rem;
+  margin-top: 0.3rem;
+  border-radius: 0.6rem;
+  color: var(--text-color);
+  transition: 0.3s ease;
+}
+
+.formInput input:focus {
+  transform: scale(102%);
+}
+
+.checkboxWrapper24 .checkbox {
+  display: table-cell;
+  width: 100%;
+  height: 100%;
+  vertical-align: middle;
+  text-align: center;
+}
+
+.checkboxWrapper24 label {
+  display: inline-block;
+  color: #333;
+  cursor: pointer;
+  position: relative;
+}
+.checkboxWrapper24 label span {
+  display: inline-block;
+  position: relative;
+  background-color: transparent;
+  width: 25px;
+  height: 25px;
+  transform-origin: center;
+  border: 2px solid #333;
+  border-radius: 50%;
+  vertical-align: middle;
+  margin-right: 10px;
+  transition: background-color 150ms 200ms,
+    transform 350ms cubic-bezier(0.78, -1.22, 0.17, 1.89);
+}
+.checkboxWrapper24 label span:before {
+  content: "";
+  width: 0px;
+  height: 2px;
+  border-radius: 2px;
+  background: #333;
+  position: absolute;
+  transform: rotate(45deg);
+  top: 10px;
+  left: 7px;
+  transition: width 50ms ease 50ms;
+  transform-origin: 0% 0%;
+}
+.checkboxWrapper24 label span:after {
+  content: "";
+  width: 0;
+  height: 2px;
+  border-radius: 2px;
+  background: #333;
+  position: absolute;
+  transform: rotate(305deg);
+  top: 14px;
+  left: 8px;
+  transition: width 50ms ease;
+  transform-origin: 0% 0%;
+}
+.checkboxWrapper24 label:hover span:before {
+  width: 5px;
+  transition: width 100ms ease;
+}
+.checkboxWrapper24 label:hover span:after {
+  width: 10px;
+  transition: width 150ms ease 100ms;
+}
+
+.checkboxWrapper24 input[type="checkbox"] {
+  display: none;
+}
+.checkboxWrapper24 input[type="checkbox"]:checked + label span {
+  background-color: #333;
+  transform: scale(1.25);
+}
+.checkboxWrapper24 input[type="checkbox"]:checked + label span:after {
+  width: 10px;
+  background: #fff;
+  transition: width 150ms ease 100ms;
+}
+.checkboxWrapper24 input[type="checkbox"]:checked + label span:before {
+  width: 5px;
+  background: #fff;
+  transition: width 150ms ease 100ms;
+}
+.checkboxWrapper24 input[type="checkbox"]:checked + label:hover span {
+  background-color: #333;
+  transform: scale(1.25);
+}
+.checkboxWrapper24 input[type="checkbox"]:checked + label:hover span:after {
+  width: 10px;
+  background: #fff;
+  transition: width 150ms ease 100ms;
+}
+.checkboxWrapper24 input[type="checkbox"]:checked + label:hover span:before {
+  width: 5px;
+  background: #fff;
+  transition: width 150ms ease 100ms;
+}
+
+.submitButton {
+  border: 0.1rem solid var(--second-bg-color);
+  background: var(--text-color);
+  padding: 0.5rem;
+  font-size: 1.2rem;
+  font-weight: 600;
+  border-radius: 1rem;
+  transition: 0.3s ease;
+  cursor: pointer;
+  bottom: 0;
+}
+
+.submitButton:hover {
+  background: var(--bg-color);
+  color: var(--text-color);
+}

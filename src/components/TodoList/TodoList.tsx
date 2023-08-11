@@ -11,7 +11,12 @@ import {
   tasksState,
 } from "../../constants/types";
 import AddItemForm from "../AddItemForm/AddItemForm";
-import { addTask, addTaskTC, getTasksTC, reorderTasks } from "../../store/slices/tasks.slice";
+import {
+  addTask,
+  addTaskTC,
+  getTasksTC,
+  reorderTasks,
+} from "../../store/slices/tasks.slice";
 import {
   changeTodoListFilter,
   removeTodoTC,
@@ -21,7 +26,7 @@ import RadioButton from "../RadioButton/RadioButton";
 import { useAppDispatch } from "../../utils/hooks/useAppDispatch";
 import { TaskStatuses, TaskType } from "../../api/todoistAPI";
 import Preloader from "../Preloader/Preloader";
-import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
+import { DragDropContext, Draggable, DropResult, Droppable } from "react-beautiful-dnd";
 
 type TodoListProps = {
   todoList: TodoListType;
@@ -90,7 +95,7 @@ const TodoList: FC<TodoListProps> = React.memo((props) => {
     [props.todoList.id, dispatch]
   );
 
-  const dragDropHandler = (results: any) => {
+  const dragDropHandler = (results: DropResult) => {
     const { source, destination, type } = results;
 
     console.log(results);
@@ -106,20 +111,22 @@ const TodoList: FC<TodoListProps> = React.memo((props) => {
       return;
     }
 
-    if (type === "group") {
+    if (type === "tasks") {
       const reorderedTasksState: TaskType[] = [...tasksForRender];
 
       const sourceIndex = source.index;
       const destinationIndex = destination.index;
 
-      const reorderedSource = reorderedTasksState[sourceIndex]
-      reorderedTasksState[sourceIndex] = reorderedTasksState[destinationIndex]
-      reorderedTasksState[destinationIndex] = reorderedSource
+      const reorderedSource = reorderedTasksState[sourceIndex];
+      reorderedTasksState[sourceIndex] = reorderedTasksState[destinationIndex];
+      reorderedTasksState[destinationIndex] = reorderedSource;
 
-      dispatch(reorderTasks({
-        todoListId: props.todoList.id,
-        reorderedTasksState: reorderedTasksState
-      }))
+      dispatch(
+        reorderTasks({
+          todoListId: props.todoList.id,
+          reorderedTasksState: reorderedTasksState,
+        })
+      );
     }
   };
 
@@ -155,7 +162,7 @@ const TodoList: FC<TodoListProps> = React.memo((props) => {
         {tasksState.isFetching ? (
           <Preloader />
         ) : (
-          <Droppable droppableId={props.todoList.id} type="group">
+          <Droppable droppableId={props.todoList.id} type="tasks">
             {(provided) => {
               return (
                 <div
@@ -190,6 +197,7 @@ const TodoList: FC<TodoListProps> = React.memo((props) => {
                       </Draggable>
                     );
                   })}
+                  {provided.placeholder}
                 </div>
               );
             }}

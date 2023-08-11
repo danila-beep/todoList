@@ -1,72 +1,41 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./App.css";
-import { useDispatch, useSelector } from "react-redux";
-import { AppDispatchType, RootStateType } from "./store/store";
-import { TodoListType, TodoListsState } from "./constants/types";
-import {
-  addTodoList,
-  addTodoTC,
-  getTodoTC,
-} from "./store/slices/todoLists.slice";
+import { useSelector } from "react-redux";
+import { RootStateType } from "./store/store";
+import { TodoListsState } from "./constants/types";
+import { addTodoTC } from "./store/slices/todoLists.slice";
 import SideBar from "./components/SideBar/SideBar";
 import AddItemForm from "./components/AddItemForm/AddItemForm";
 import TodoList from "./components/TodoList/TodoList";
 import { useAppDispatch } from "./utils/hooks/useAppDispatch";
 import Preloader from "./components/Preloader/Preloader";
-import { DragDropContext } from "react-beautiful-dnd";
+import LoginModal from "./components/LoginModal/LoginModal";
+import { meTC } from "./store/slices/auth.slice";
+import { Navigate, Route, Router, Routes, useNavigate } from "react-router-dom";
+import TodoListPage from "./pages/TodoListPage";
 
 function App() {
-  const todoListsState = useSelector<RootStateType, TodoListsState>(
-    (state) => state.todoLists
+  const isLoggedIn = useSelector(
+    (state: RootStateType) => state.auth.isLoggedIn
   );
   const dispatch = useAppDispatch();
 
-  const [addTodoListInputValue, setAddTodoListInputValue] = useState("");
-  const [addItemError, setAddItemError] = useState<boolean>(false);
+console.log(isLoggedIn)
 
   useEffect(() => {
-    dispatch(getTodoTC());
-  }, []);
-
-  const addTodoListHandler = () => {
-    if (addTodoListInputValue === "" || addTodoListInputValue === undefined) {
-      setAddItemError(true);
-    } else if (addTodoListInputValue.length > 0) {
-      dispatch(addTodoTC(addTodoListInputValue));
-      setAddTodoListInputValue("");
-    }
-  };
-
-  const addTodoInputSetter = (value: string) => {
-    setAddTodoListInputValue(value);
-    setAddItemError(false);
-  };
-
-
+    dispatch(meTC());
+  }, [dispatch]);
 
   return (
     <div className="App">
       <SideBar />
       <div className="MainContentWrapper">
-        <AddItemForm
-          addingElement={"TodoList"}
-          onClick={addTodoListHandler}
-          value={addTodoListInputValue}
-          onChange={addTodoInputSetter}
-          keyPressAllow
-        />
-        {addItemError ? (
-          <div className="errorMessage">Title is hard required</div>
-        ) : undefined}
-        {todoListsState.isFetching ? (
-          <Preloader />
-        ) : (
-          <div className="todoListsList">
-            {todoListsState.todoLists.map((todoList) => {
-              return <TodoList todoList={todoList} key={todoList.id} />;
-            })}
-          </div>
-        )}
+        <Routes>
+          <Route path={"/"} element={<TodoListPage />} />
+          <Route path={"/login"} element={<LoginModal />} />
+          ​<Route path="/404" element={<h1>404: PAGE NOT FOUND</h1>} />
+          ​<Route path="*" element={<Navigate to={"/404"} />} />
+        </Routes>
       </div>
     </div>
   );

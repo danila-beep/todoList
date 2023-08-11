@@ -1,8 +1,14 @@
 import React from "react";
 import s from "./sidebar.module.css";
 import { UilDashboard, UilHome } from "@iconscout/react-unicons";
+import { useAppDispatch } from "../../utils/hooks/useAppDispatch";
+import { logoutTC } from "../../store/slices/auth.slice";
 
 const SideBar = React.memo(() => {
+  const dispatch = useAppDispatch();
+  const logoutButtonHandler = () => {
+    dispatch(logoutTC());
+  };
   return (
     <div className={s.sideBarWrapper}>
       <h1>TodoList</h1>
@@ -19,7 +25,7 @@ const SideBar = React.memo(() => {
         </ul>
       </nav>
       <div className={s.loginButton}>
-        <button>Login / SignUp</button>
+        <button onClick={logoutButtonHandler}>Logout</button>
       </div>
     </div>
   );

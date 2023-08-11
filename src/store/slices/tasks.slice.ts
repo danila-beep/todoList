@@ -2,7 +2,7 @@ import { Dispatch, createSlice } from "@reduxjs/toolkit";
 
 import { v1 } from "uuid";
 import { tasksState } from "../../constants/types";
-import { TaskStatuses, todoListAPI } from "../../api/todoistAPI";
+import { TaskStatuses, TaskType, todoListAPI } from "../../api/todoistAPI";
 import { RootStateType } from "../store";
 
 export const todoListId_1 = v1();

@@ -1,12 +1,12 @@
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap");
 
 :root {
-    --bg-color: #212121;
-    --second-bg-color: #292929;
-    --third-bg-color: #383838;
-    --text-color: #e4e4e4;
-    --second-text-color: #a3a3a3;
-    --icon-color: #a0a0a0;
+  --bg-color: #212121;
+  --second-bg-color: #292929;
+  --third-bg-color: #383838;
+  --text-color: #e4e4e4;
+  --second-text-color: #a3a3a3;
+  --icon-color: #a0a0a0;
 }
 
 * {
@@ -16,9 +16,9 @@
 }
 
 body {
-    background: var(--bg-color);
-    color: var(--text-color);
-    font-family: "Poppins", sans-serif;
+  background: var(--bg-color);
+  color: var(--text-color);
+  font-family: "Poppins", sans-serif;
 }
 
 html {

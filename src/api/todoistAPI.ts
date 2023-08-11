@@ -6,6 +6,28 @@ const todoListInstance = axios.create({
   headers: {},
 });
 
+export const auth = {
+  login: (data: AuthDataType) => {
+    return todoListInstance.post<
+      null,
+      AxiosResponse<ResponseType<{ userId: number }>>,
+      AuthDataType
+    >("auth/login", data);
+  },
+  me: () => {
+    return todoListInstance.get<ResponseType>("auth/me");
+  },
+  logout: () => {
+    return todoListInstance.delete("auth/login");
+  },
+};
+
+export type AuthDataType = {
+  email: string;
+  password: string;
+  rememberMe: boolean;
+};
+
 export const todoListAPI = {
   getTodo: () => {
     const promise = todoListInstance.get<TodoListsType[]>("todo-lists");
@@ -33,9 +55,7 @@ export const todoListAPI = {
     return promise;
   },
   getTasks: (todoListId: string) => {
-    return todoListInstance.get<TasksType>(
-      `todo-lists/${todoListId}/tasks`
-    );
+    return todoListInstance.get<TasksType>(`todo-lists/${todoListId}/tasks`);
   },
   createTask: (todoListId: string, title: string) => {
     return todoListInstance.post<
@@ -44,14 +64,25 @@ export const todoListAPI = {
     >(`todo-lists/${todoListId}/tasks`, { title: title });
   },
   deleteTask: (todoListId: string, taskId: string) => {
-    return todoListInstance.delete<TasksResponseType>(`todo-lists/${todoListId}/tasks/${taskId}`)
+    return todoListInstance.delete<TasksResponseType>(
+      `todo-lists/${todoListId}/tasks/${taskId}`
+    );
   },
   changeTaskTitle: (todoListId: string, taskId: string, title: string) => {
-    return todoListInstance.put(`todo-lists/${todoListId}/tasks/${taskId}`, {title: title})
+    return todoListInstance.put(`todo-lists/${todoListId}/tasks/${taskId}`, {
+      title: title,
+    });
   },
-  changeTaskStatus: (todoListId: string, taskId: string, updatedTask: TaskType) => {
-    return todoListInstance.put(`todo-lists/${todoListId}/tasks/${taskId}`, updatedTask)
-  }
+  changeTaskStatus: (
+    todoListId: string,
+    taskId: string,
+    updatedTask: TaskType
+  ) => {
+    return todoListInstance.put(
+      `todo-lists/${todoListId}/tasks/${taskId}`,
+      updatedTask
+    );
+  },
 };
 
 export type TodoListsType = {
@@ -66,17 +97,17 @@ export type TasksType = {
   error: string;
 };
 export enum TaskStatuses {
-    New = 0,
-    InProgress = 1,
-    Completed = 2,
-    Draft = 3
+  New = 0,
+  InProgress = 1,
+  Completed = 2,
+  Draft = 3,
 }
 export enum TaskPriorities {
-    Low = 0,
-    Middle = 1,
-    Hi = 2,
-    Urgently = 3,
-    Later = 4
+  Low = 0,
+  Middle = 1,
+  Hi = 2,
+  Urgently = 3,
+  Later = 4,
 }
 export type TaskType = {
   description: string;
