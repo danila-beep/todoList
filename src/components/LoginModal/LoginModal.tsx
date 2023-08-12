@@ -15,7 +15,7 @@ const LoginModal = () => {
     (state: RootStateType) => state.auth.isLoggedIn
   );
   const dispatch = useAppDispatch();
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   const formik = useFormik({
     initialValues: {
@@ -26,24 +26,39 @@ const LoginModal = () => {
     validationSchema: Yup.object({
       email: Yup.string().required("Required").email("Invalid email address"),
       password: Yup.string()
-        .min(5, "Password length must be at least 5 charachters")
+        .min(3, "Password length must be at least 3 charachters")
         .max(20, "Password length wouldn`t be greater than 20 charachters")
         .required("Required"),
     }),
     onSubmit: (values) => {
       dispatch(loginTC(values));
-     // formik.resetForm();
+      // formik.resetForm();
     },
   });
 
-  if(isLoggedIn){
-    navigate("/")
+  const testCredentialsButtonHandler = () => {
+    console.log(1231231231);
+    
+    formik.setFieldValue("email", "free@samuraijs.com")
+    formik.setFieldValue("password", "free")
+  }
+
+  if (isLoggedIn) {
+    navigate("/");
   }
 
   return (
     <div className={s.modalWrapper}>
       <div className={s.modalContainer}>
-        <h1>Sign In</h1>
+        <h1>
+          Sign In{" "}
+          <button
+            className={s.testButton}
+            onClick={testCredentialsButtonHandler}
+          >
+            Add Test Credentials
+          </button>
+        </h1>
         <form onSubmit={formik.handleSubmit}>
           <div className={s.formInput}>
             <label htmlFor="email">E-mail</label>
