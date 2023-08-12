@@ -4,12 +4,20 @@ import { TodoListType, TodoListsState } from "../../constants/types";
 import { addTask, todoListId_1, todoListId_2 } from "./tasks.slice";
 import { TodoListsType, todoListAPI } from "../../api/todoistAPI";
 import TodoList from "../../components/TodoList/TodoList";
+import { setAppError } from "./app.slice";
+import { error } from "console";
+import {
+  ErrorEnums,
+  handleNetworkError,
+  handleServerError,
+} from "../../utils/errorHandlers/appErrorHandlers";
 
 const initialState: TodoListsState = {
   todoLists: [],
   isFetching: true,
 };
 
+//reducer
 const todoListsSlice = createSlice({
   name: "todoLists",
   initialState,
@@ -17,14 +25,12 @@ const todoListsSlice = createSlice({
     setTodoLists: (state, action) => {
       return {
         todoLists: [...action.payload.todoLists].map((todolist) => {
-          return { ...todolist, filter: "all"};
+          return { ...todolist, filter: "all" };
         }),
-        isFetching: false
-      }
+        isFetching: false,
+      };
     },
-    reorderTodoLists: (state, action) => {
-
-    },
+    reorderTodoLists: (state, action) => {},
     addTodoList: (state, action) => {
       return {
         ...state,
@@ -59,26 +65,61 @@ const todoListsSlice = createSlice({
   },
 });
 
+//thunks
 export const getTodoTC = () => async (dispatch: Dispatch) => {
-  todoListAPI.getTodo().then((res) => {
-    dispatch(setTodoLists({ todoLists: res.data }));
-  });
+  todoListAPI
+    .getTodo()
+    .then((res) => {
+      dispatch(setTodoLists({ todoLists: res.data }));
+    })
+    .catch((error) => {
+      handleNetworkError(error, dispatch);
+    });
 };
 export const addTodoTC = (title: string) => async (dispatch: Dispatch) => {
-  todoListAPI.createTodo(title).then((res) => {
-    dispatch(addTodoList({ newTodo: res.data.data.item }));
-  });
+  todoListAPI
+    .createTodo(title)
+    .then((res) => {
+      if (res.data.resultCode === ErrorEnums.OK) {
+        dispatch(addTodoList({ newTodo: res.data.data.item }));
+      } else {
+        handleServerError(res.data, dispatch);
+      }
+    })
+    .catch((error) => {
+      handleNetworkError(error, dispatch);
+    });
 };
 export const removeTodoTC = (todoListId: string) => (dispatch: Dispatch) => {
-  todoListAPI.deleteTodo(todoListId).then((res) => {
-    dispatch(removeTodoList({ todoListId: todoListId }));
-  });
+  todoListAPI
+    .deleteTodo(todoListId)
+    .then((res) => {
+      if (res.data.resultCode === ErrorEnums.OK) {
+        dispatch(removeTodoList({ todoListId: todoListId }));
+      } else {
+        handleServerError(res.data, dispatch);
+      }
+    })
+    .catch((error) => {
+      handleNetworkError(error, dispatch);
+    });
 };
 export const changeTodoTitleTC =
   (todoListId: string, title: string) => async (dispatch: Dispatch) => {
-    todoListAPI.changeTodoTitle(todoListId, title).then((res) => {
-      dispatch(changeTodoListTitle({ todoListId: todoListId, title: title }));
-    });
+    todoListAPI
+      .changeTodoTitle(todoListId, title)
+      .then((res) => {
+        if (res.data.resultCode === ErrorEnums.OK) {
+          dispatch(
+            changeTodoListTitle({ todoListId: todoListId, title: title })
+          );
+        } else {
+          handleServerError(res.data, dispatch);
+        }
+      })
+      .catch((error) => {
+        handleNetworkError(error, dispatch);
+      });
   };
 
 export const {

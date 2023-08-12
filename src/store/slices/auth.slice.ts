@@ -1,5 +1,12 @@
 import { Dispatch, PayloadAction, createSlice } from "@reduxjs/toolkit";
 import { AuthDataType, auth, todoListAPI } from "../../api/todoistAPI";
+import { setAppInitialized } from "./app.slice";
+import { error } from "console";
+import {
+  ErrorEnums,
+  handleNetworkError,
+  handleServerError,
+} from "../../utils/errorHandlers/appErrorHandlers";
 
 const initialState = {
   isLoggedIn: false,
@@ -23,16 +30,28 @@ const authSlice = createSlice({
 
 //thunk
 export const loginTC = (data: AuthDataType) => async (dispatch: Dispatch) => {
-  auth.login(data).then((res) => {
-    console.log(res);
-    dispatch(login({ isLoggedIn: true }));
-  });
+  auth
+    .login(data)
+    .then((res) => {
+      console.log(res);
+      if (res.data.resultCode === ErrorEnums.OK) {
+        dispatch(login({ isLoggedIn: true }));
+      } else {
+        handleServerError(res.data, dispatch);
+      }
+    })
+    .catch((error) => {
+      handleNetworkError(error, dispatch);
+    });
 };
 export const meTC = () => async (dispatch: Dispatch) => {
   auth.me().then((res) => {
     console.log(res);
-    if (res.data.resultCode === 0) {
+    if (res.data.resultCode === ErrorEnums.OK) {
       dispatch(login({ isLoggedIn: true }));
+      dispatch(setAppInitialized({ isAppInitialized: true }));
+    } else {
+      
     }
   });
 };
