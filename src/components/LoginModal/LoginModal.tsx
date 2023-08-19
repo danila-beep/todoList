@@ -1,14 +1,11 @@
 import React from "react";
 import s from "./modal.module.css";
-import { createPortal } from "react-dom";
 import { useFormik } from "formik";
-import CheckBox from "../CheckBox/CheckBox";
 import * as Yup from "yup";
-import { useDispatch, useSelector } from "react-redux";
-import { loginTC } from "../../store/slices/auth.slice";
-import { useAppDispatch } from "../../utils/hooks/useAppDispatch";
-import { RootStateType } from "../../store/store";
-import { Navigate, useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { loginTC } from "store/slices/auth.slice";
+import { RootStateType, useAppDispatch } from "store/store";
+import { useNavigate } from "react-router-dom";
 
 const LoginModal = () => {
   const isLoggedIn = useSelector(
@@ -32,7 +29,7 @@ const LoginModal = () => {
     }),
     onSubmit: (values) => {
       dispatch(loginTC(values));
-      // formik.resetForm();
+      formik.resetForm();
     },
   });
 

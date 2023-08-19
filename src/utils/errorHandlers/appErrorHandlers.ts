@@ -1,24 +1,23 @@
-import { Dispatch } from "@reduxjs/toolkit";
-import { setAppError } from "../../store/slices/app.slice";
-import { ResponseType } from "../../api/todoistAPI";
+import { Dispatch } from "@reduxjs/toolkit"
+import { GetTasksResponseType, ResponseType } from "api/todoistAPI"
+import { appActions } from "store/slices/app.slice"
 
-export enum ErrorEnums {
-  OK = 0,
-  ERROR = 1,
-  CAPCHAERROR = 10,
+export const handleNetworkError = (error: { message: string }, dispatch: Dispatch) => {
+    dispatch(appActions.setAppError({ appError: error.message }))
 }
 
-export const handleNetworkError = (
-  error: { message: string },
-  dispatch: Dispatch
+export const handleServerError = <D>(
+    data: ResponseType | GetTasksResponseType,
+    dispatch: Dispatch,
 ) => {
-  dispatch(setAppError({ appError: error.message }));
-};
-
-export const handleServerError = (data: ResponseType, dispatch: Dispatch) => {
-  if (data.messages.length) {
-    dispatch(setAppError({ appError: data.messages[0] }));
-  } else {
-    dispatch(setAppError({ appError: "Some unexpected error occured" }));
-  }
-};
+    if ((data as ResponseType).messages.length) {
+        dispatch(appActions.setAppError({ appError: (data as ResponseType).messages[0] }))
+        appActions.setAppStatus({ appStatus: "error" })
+    } else if ((data as GetTasksResponseType).error) {
+        dispatch(appActions.setAppError({ appError: (data as GetTasksResponseType).error }))
+        appActions.setAppStatus({ appStatus: "error" })
+    } else {
+        dispatch(appActions.setAppError({ appError: "Some unexpected error occured" }))
+        appActions.setAppStatus({ appStatus: "error" })
+    }
+}

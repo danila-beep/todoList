@@ -1,23 +1,25 @@
-import { configureStore } from "@reduxjs/toolkit";
-import tasksSlice from "./slices/tasks.slice";
-import todoListsSlice from "./slices/todoLists.slice";
-import authSlice from "./slices/auth.slice";
-import appSlice from "./slices/app.slice";
+import { authReducer } from "./slices/auth.slice"
+import { appReducer } from "./slices/app.slice"
+import { todoListsReducer } from "./slices/todoLists.slice"
+import { tasksReducer } from "./slices/tasks.slice"
+import { useDispatch, useSelector } from "react-redux"
+import { configureStore } from "@reduxjs/toolkit"
 
-const store = configureStore({
-  reducer: {
-    app: appSlice,
-    auth: authSlice,
-    todoLists: todoListsSlice,
-    tasks: tasksSlice,
-  },
-  devTools: true,
-});
+const reducer = {
+    app: appReducer,
+    auth: authReducer,
+    todoLists: todoListsReducer,
+    tasks: tasksReducer,
+}
 
-export type RootStateType = ReturnType<typeof store.getState>;
-export type AppDispatchType = typeof store.dispatch;
+const store = configureStore({ reducer })
+
+export type RootStateType = ReturnType<typeof store.getState>
+export type AppDispatchType = typeof store.dispatch
+export const useAppDispatch: () => AppDispatchType = useDispatch
+export const useAppSelector = useSelector<RootStateType, unknown>
 
 // @ts-ignore
-window.store = store;
+window.store = store
 
-export default store;
+export default store

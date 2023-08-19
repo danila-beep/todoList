@@ -1,5 +1,5 @@
 .todoListWrapper {
-  min-width: 25rem;
+  min-width: 20rem;
   background: var(--second-bg-color);
   display: inline-flex;
   padding: 2% 1rem;
