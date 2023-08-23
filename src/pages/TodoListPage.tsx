@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react"
 import AddItemForm from "components/AddItemForm/AddItemForm"
 import Preloader from "components/Preloader/Preloader"
 import TodoList from "components/TodoList/TodoList"
-import { addTodoTC, getTodoTC } from "store/slices/todoLists.slice"
+import { addTodoTC, getTodoTC, todoListsActions } from "store/slices/todoLists.slice"
 import { useSelector } from "react-redux"
 import { TodoListsState } from "constants/types"
 import { RootStateType, useAppDispatch } from "store/store"
@@ -23,6 +23,10 @@ const TodoListPage = () => {
             dispatch(getTodoTC())
         } else {
             navigate("/login")
+        }
+        return () => {
+            dispatch(todoListsActions.clearTodoLists())
+            
         }
     }, [dispatch, isLoggedIn, navigate])
 

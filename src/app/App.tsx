@@ -9,6 +9,7 @@ import SnackBar from "components/SnackBar/SnackBar"
 import { useAppDispatch, useAppSelector } from "store/store"
 import LinearPreloader from "components/Preloader/LinearPreloader"
 import { selectAppError, selectAppStatus } from "store/slices/app.slice"
+import DashBoardPage from "pages/DashBoardPage"
 
 function App() {
     const dispatch = useAppDispatch()
@@ -38,6 +39,7 @@ function App() {
                 <Routes>
                     <Route path={"/"} element={<TodoListPage />} />
                     <Route path={"/login"} element={<LoginModal />} />
+                    <Route path={"/dashboard"} element={<DashBoardPage />} />
                     ​<Route path="/404" element={<h1>404: PAGE NOT FOUND</h1>} />
                     ​<Route path="*" element={<Navigate to={"/404"} />} />
                 </Routes>

@@ -1,0 +1,13 @@
+.dashboardPageWrapper {
+    margin: 5rem 8rem 0 8rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 2rem;
+}
+
+.statsList {
+    display: flex;
+    gap: 2rem;
+}
+

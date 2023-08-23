@@ -75,6 +75,9 @@ const slice = createSlice({
                 state.isFetching = true
                 state.tasks = {}
             })
+            .addCase(todoListsActions.clearTodoLists, (state) => {
+                state.tasks = {}
+            })
     },
 })
 

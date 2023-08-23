@@ -40,9 +40,12 @@ const slice = createSlice({
             const index = state.todoLists.findIndex((todo) => todo.id === action.payload.todoListId)
             state.todoLists[index].filter = action.payload.newFilterValue
         },
+        clearTodoLists: (state) => {
+            state.todoLists = []
+        }
     },
     extraReducers(builder) {
-        builder.addCase(authActions.logout, (state, action) => {
+        builder.addCase(authActions.logout, (state) => {
             state.isFetching = true
             state.todoLists = []
         })
