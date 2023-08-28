@@ -1,10 +1,9 @@
 import { Dispatch, PayloadAction, createSlice } from "@reduxjs/toolkit"
 import { AuthDataType, RESULT_CODES, auth } from "api/todoistAPI"
-import {
-    handleNetworkError,
-    handleServerError,
-} from "utils/errorHandlers/appErrorHandlers"
+import { handleNetworkError, handleServerError } from "utils/errorHandlers/appErrorHandlers"
 import { appActions } from "./app.slice"
+import { RootStateType } from "store/store"
+import { userActions } from "./user.slice"
 
 //reducer
 const slice = createSlice({
@@ -14,8 +13,6 @@ const slice = createSlice({
     },
     reducers: {
         login: (state, action: PayloadAction<{ isLoggedIn: boolean }>) => {
-            console.log(state)
-
             state.isLoggedIn = action.payload.isLoggedIn
         },
         logout: (state) => {
@@ -31,7 +28,6 @@ export const authActions = slice.actions
 export const loginTC = (data: AuthDataType) => async (dispatch: Dispatch) => {
     auth.login(data)
         .then((res) => {
-            console.log(res)
             if (res.data.resultCode === RESULT_CODES.OK) {
                 dispatch(authActions.login({ isLoggedIn: true }))
             } else {
@@ -44,11 +40,18 @@ export const loginTC = (data: AuthDataType) => async (dispatch: Dispatch) => {
 }
 export const meTC = () => async (dispatch: Dispatch) => {
     auth.me().then((res) => {
-        console.log(res)
         if (res.data.resultCode === RESULT_CODES.OK) {
             dispatch(authActions.login({ isLoggedIn: true }))
             dispatch(appActions.setAppInitialized({ isAppInitialized: true }))
+            dispatch(
+                userActions.setUserInfo({
+                    id: res.data.data.id,
+                    email: res.data.data.email,
+                    login: res.data.data.login,
+                }),
+            )
         } else {
+            dispatch(appActions.setAppInitialized({ isAppInitialized: true }))
         }
     })
 }
@@ -57,3 +60,6 @@ export const logoutTC = () => async (dispatch: Dispatch) => {
         dispatch(authActions.logout())
     })
 }
+
+//selectors
+export const selectIsLoggedIn = (state: RootStateType) => state.auth.isLoggedIn

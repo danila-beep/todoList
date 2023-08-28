@@ -12,14 +12,13 @@ import LinearPreloader from "components/Preloader/LinearPreloader"
 const TodoListPage = () => {
     const todoListsState = useSelector<RootStateType, TodoListsState>((state) => state.todoLists)
     const isLoggedIn = useSelector((state: RootStateType) => state.auth.isLoggedIn)
-    console.log(isLoggedIn)
+
 
     const dispatch = useAppDispatch()
     const navigate = useNavigate()
 
     useEffect(() => {
         if (isLoggedIn) {
-            console.log("gettodolist")
             dispatch(getTodoTC())
         } else {
             navigate("/login")

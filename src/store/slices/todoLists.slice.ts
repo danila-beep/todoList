@@ -7,6 +7,7 @@ import {
 } from "utils/errorHandlers/appErrorHandlers"
 import { authActions } from "./auth.slice"
 import { appActions } from "./app.slice"
+import { RootStateType } from "store/store"
 
 //reducer
 const slice = createSlice({
@@ -122,3 +123,7 @@ export const changeTodoTitleTC =
                 handleNetworkError(error, dispatch)
             })
     }
+
+//selectors
+export const selectTodoLists = (state: RootStateType): TodoListType[] => state.todoLists.todoLists
+export const selectTodoListsFetchingStatus = (state: RootStateType): boolean => state.todoLists.isFetching

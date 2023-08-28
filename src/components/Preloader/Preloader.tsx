@@ -1,15 +1,12 @@
-import React from "react";
-import s from "./preloader.module.css";
+import React from "react"
+import s from "./preloader.module.css"
 
 const Preloader = () => {
-  return (
-    <div className={s.ldsRing}>
-      <div></div>
-      <div></div>
-      <div></div>
-      <div></div>
-    </div>
-  );
-};
+    return (
+        <div className={`${s.loader2} ${s.center}`}>
+            <span></span>
+        </div>
+    )
+}
 
-export default Preloader;
+export default Preloader

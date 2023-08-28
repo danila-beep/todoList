@@ -15,7 +15,9 @@ export const auth = {
         >("auth/login", data)
     },
     me: () => {
-        return todoListInstance.get<AuthResponseType>("auth/me")
+        return todoListInstance.get<AuthResponseType<{ id: number; email: string; login: string }>>(
+            "auth/me",
+        )
     },
     logout: () => {
         return todoListInstance.delete<AuthResponseType>("auth/login")

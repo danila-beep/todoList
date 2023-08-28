@@ -67,12 +67,13 @@ const slice = createSlice({
                 action.payload.todoLists.forEach((todo) => {
                     state.tasks[todo.id] = []
                 })
+                state.isFetching = false
             })
             .addCase(todoListsActions.removeTodoList, (state, action) => {
                 delete state.tasks[action.payload.todoListId]
             })
             .addCase(authActions.logout, (state, action) => {
-                state.isFetching = true
+                state.isFetching = false
                 state.tasks = {}
             })
             .addCase(todoListsActions.clearTodoLists, (state) => {

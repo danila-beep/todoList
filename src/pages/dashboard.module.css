@@ -6,8 +6,66 @@
     gap: 2rem;
 }
 
-.statsList {
+.profileInfo {
     display: flex;
+    gap: 2rem;
+    align-items: center;
+}
+
+
+.instruments {
+    display: flex;
+    flex-direction: row;
     gap: 2rem;
 }
 
+.instruments li {
+    border: .1rem solid var(--text-color);
+    border-radius: .5rem;
+    padding: 1rem;
+    display: flex;
+    gap: 2rem;
+    flex-direction: column;
+    align-items: center;
+    min-width: 15rem;
+}
+
+.instumentsBtns {
+    display: flex;
+    gap: 1rem;
+}
+
+.instumentsBtns button {
+    padding: .5rem;
+    border: .2rem solid rgb(107, 107, 229);
+    border-radius: .5rem;
+    background: transparent;
+    color: var(--text-color);
+    transition: .3s;
+    cursor: pointer;
+}
+
+.instumentsBtns button:hover {
+    background: rgb(107, 107, 229);
+}
+
+.instumentsBtns button:active {
+    transform: scale(1.05);
+}
+
+.settings {
+    display: flex;
+    flex-direction: column;
+}
+
+.settingTitle {
+    font-size: 1.3rem;
+    color: rgb(107, 107, 229);
+    font-weight: 700;
+}
+
+.settings li {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+}
